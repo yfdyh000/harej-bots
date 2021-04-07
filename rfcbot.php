@@ -101,7 +101,7 @@ $RFC_pagetitles = array(
 "unsorted"	=> "Wikipedia:請求評論/未分類",
 );
 
-$toolserver_mycnf = parse_ini_file("/data/project/legobot/replica.my.cnf");
+$toolserver_mycnf = parse_ini_file(getenv("HOME") . "/replica.my.cnf");
 $toolserver_username = $toolserver_mycnf['user'];
 $toolserver_password = $toolserver_mycnf['password'];
 
@@ -112,7 +112,7 @@ if(mysqli_connect_errno()) {
 	die();
 }
 echo "Connecting to replica\n";
-$replica_mycnf = parse_ini_file("/data/project/legobot/replica.my.cnf");
+$replica_mycnf = parse_ini_file(getenv("HOME") . "/replica.my.cnf");
 $replica_username = $replica_mycnf['user'];
 $replica_password = $replica_mycnf['password'];
 
