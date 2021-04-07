@@ -81,7 +81,7 @@ foreach ($RFC_categories as $cat) {
 }
 
 // This specific exception was provided for upon request of WikiProject Philosophy.
-$RFC_submissions["reli"] = "'''以下讨论需要社群广泛关注：'''\n{{Philosophy/Nav}}\n\n"; 
+//$RFC_submissions["reli"] = "'''以下讨论需要社群广泛关注：'''\n{{Philosophy/Nav}}\n\n"; 
 
 $RFC_pagetitles = array(
 "bio"		=> "Wikipedia:請求評論/傳記",
@@ -418,7 +418,7 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 	if (!empty($summary_removed)) {
 		$summary .= "移除：";
 		foreach ($summary_removed as $removed) {
-			$summary .= " [[$removed]]";
+			$summary .= "[[$removed]]";
 		}
 	}
 	
@@ -427,7 +427,7 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 			$summary = '维护';
 		}
 		echo "Editing: [[$RFCpage]]\n";
-		$RFCpage->edit($newpage,trim($summary).'.');
+		$RFCpage->edit($newpage,trim($summary));
 	}
 }
 $rfclisting .= "}}";
