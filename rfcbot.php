@@ -59,7 +59,7 @@ $botuser = 'YFdyh-bot';
 require_once 'botclasses.php';
 require_once 'new_mediawiki.php';
 require_once 'harejpass.php';
-$wiki = new mediawiki($botuser, $botpass);
+$wiki = new mediawiki($botuser, $botpass, 'https://zh.wikipedia.org/w/api.php');
 
 // Definitions
 $RFC_categories	= array(
