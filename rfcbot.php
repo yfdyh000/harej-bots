@@ -32,8 +32,8 @@ function generateRfcId ($tries=0) {
 
 	$tries++;
 	if ($tries>5) {
-		$page = $wiki->page('User talk:Chris G');
-		$page->addSection('HELP! PLEASE!','Something is very wrong. I\'m having trouble generating a new RFC id. Please help me. --~~~~');
+		$page = $wiki->page('User talk:YFdyh-bot');
+		$page->addSection('运行出错','生成RFC id出错。--~~~~');
 		die();
 	}
 	$tempid = substr(strtoupper(md5(rand())), 0, 7);
@@ -53,7 +53,7 @@ function generateRfcId ($tries=0) {
 	}
 }
 
-$botuser = 'Legobot';
+$botuser = 'YFdyh-bot';
 
 //require_once 'database.inc';
 require_once 'botclasses.php';
@@ -81,24 +81,24 @@ foreach ($RFC_categories as $cat) {
 }
 
 // This specific exception was provided for upon request of WikiProject Philosophy.
-$RFC_submissions["reli"] = "'''The following discussions are requested to have community-wide attention:'''\n{{Philosophy/Nav}}\n\n"; 
+$RFC_submissions["reli"] = "'''以下讨论需要社群广泛关注：'''\n{{Philosophy/Nav}}\n\n"; 
 
 $RFC_pagetitles = array(
-"bio"		=> "Wikipedia:Requests for comment/Biographies",
-"econ"		=> "Wikipedia:Requests for comment/Economy, trade, and companies",
-"hist"		=> "Wikipedia:Requests for comment/History and geography",
-"lang"		=> "Wikipedia:Requests for comment/Language and linguistics",
-"sci"		=> "Wikipedia:Requests for comment/Maths, science, and technology",
-"media"		=> "Wikipedia:Requests for comment/Media, the arts, and architecture",
-"pol"		=> "Wikipedia:Requests for comment/Politics, government, and law",
-"reli"		=> "Wikipedia:Requests for comment/Religion and philosophy",
-"soc"		=> "Wikipedia:Requests for comment/Society, sports, and culture",
-"style"		=> "Wikipedia:Requests for comment/Wikipedia style and naming",
-"policy"	=> "Wikipedia:Requests for comment/Wikipedia policies and guidelines",
-"proj"		=> "Wikipedia:Requests for comment/WikiProjects and collaborations",
-"tech"		=> "Wikipedia:Requests for comment/Wikipedia technical issues and templates",
-"prop"		=> "Wikipedia:Requests for comment/Wikipedia proposals",
-"unsorted"	=> "Wikipedia:Requests for comment/Unsorted",
+"bio"		=> "Wikipedia:請求評論/傳記",
+"econ"		=> "Wikipedia:請求評論/經濟、貿易與公司",
+"hist"		=> "Wikipedia:請求評論/歷史與地理",
+"lang"		=> "Wikipedia:請求評論/語言及語言學",
+"sci"		=> "Wikipedia:請求評論/數學、科學與科技",
+"media"		=> "Wikipedia:請求評論/媒體、藝術與建築",
+"pol"		=> "Wikipedia:請求評論/政治、政府與法律",
+"reli"		=> "Wikipedia:請求評論/宗教與哲學",
+"soc"		=> "Wikipedia:請求評論/社會、體育運動與文化",
+"style"		=> "Wikipedia:請求評論/維基百科格式與命名",
+"policy"	=> "Wikipedia:請求評論/維基百科方針與指引",
+"proj"		=> "Wikipedia:請求評論/維基專題與協作",
+"tech"		=> "Wikipedia:請求評論/維基百科技術議題與模板",
+"prop"		=> "Wikipedia:請求評論/維基百科提議",
+"unsorted"	=> "Wikipedia:請求評論/未分類",
 );
 
 $toolserver_mycnf = parse_ini_file("/data/project/legobot/replica.my.cnf");
@@ -116,7 +116,7 @@ $replica_mycnf = parse_ini_file("/data/project/legobot/replica.my.cnf");
 $replica_username = $replica_mycnf['user'];
 $replica_password = $replica_mycnf['password'];
 
-$enwikidb = new mysqli('enwiki.labsdb',$replica_username,$replica_password,'enwiki_p');
+$enwikidb = new mysqli('zhwiki.labsdb',$replica_username,$replica_password,'zhwiki_p');
 if(mysqli_connect_errno()) {
 	echo "Connection Failed: " . mysqli_connect_errno();
 	die();
@@ -156,8 +156,8 @@ foreach ($transclusions as $page) {
 		$newtag		= str_replace("|}}", "}}", $newtag);
 		$newtag		= str_replace("|art", "|media", $newtag);
 		$content	= str_replace($fix, $newtag, $content);
-		echo "Editing [[$page]]\n";
-		$page->edit($content,"Fixing RFC template syntax.");
+		echo "编辑[[$page]]\n";
+		$page->edit($content,"修正RFC模板语法");
 	}
 	
 	// Step 2: Seeding RFC IDs.
@@ -169,8 +169,8 @@ foreach ($transclusions as $page) {
 			$rfcid = generateRfcId(); # a seven-character random string with capital letters and digits
 			$content = str_replace($match, "{{subst:DNAU|5|weeks}}\n" . $match . "|rfcid=" . $rfcid . "}}", $content);
 			$content = str_replace("}}|rfcid", "|rfcid", $content);
-			echo "Editing [[$page]]\n";
-			$page->edit($content,"Adding RFC ID.");
+			echo "编辑[[$page]]\n";
+			$page->edit($content,"新增RFC ID");
 			
 			$insertId = $rfcdb->prepare("INSERT INTO `rfc` (`rfc_id`, `rfc_page`, `rfc_contacted`) VALUES (?, ?, 0);");
 			$insertId->bind_param("ss",$rfcid,$page);
@@ -234,11 +234,11 @@ foreach ($transclusions as $page) {
 		
 		// Step 4: Inspecting for expiration. Something that's expired gets removed; something that's not expired gets moved up to the big leagues! Whee!
 		if (time() - $timestamp > 2592000 && $timestamp != "" && !preg_match('/<!--\s*RFCBot\s+Ignore\s+Expired\s*-->/i',$content) || preg_match("/\/Archive \d+/", $page)) {
-			echo "RFC expired. Removing tag.\n";
+			echo "RFC过期，去除标签。\n";
 			$content = preg_replace("/\{\{rfc(tag)?(?!\s+top)\s*(\|[a-z0-9\., ]*)*\s*\|rfcid=$rfcid\s*(\|[a-z0-9\., \|]*)*\s*\}\}(\n|\s)?/i", "", $content);
 			
-			echo "Editing [[$page]]\n";
-			$page->edit($content,"Removing expired RFC template.");
+			echo "编辑[[$page]]\n";
+			$page->edit($content,"去除过期的请求评论模板");
 			
 			$all_expired[] = $rfcid;
 			
@@ -376,7 +376,7 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 	$rfcSelect->bind_result($rfcid,$rfcpage);
 	
 	$counter++;
-	$rfclisting .= "| group" . $counter . " = [[" . $RFCpage . "|" . str_replace("Wikipedia:Requests for comment/", "", $RFCpage) . "]]\n";
+	$rfclisting .= "| group" . $counter . " = [[" . $RFCpage . "|" . str_replace("Wikipedia:請求評論/", "", $RFCpage) . "]]\n";
 	$rfclisting .= "| list" . $counter . " = ";
 	$dot=false;
 	
@@ -409,14 +409,14 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 	$newpage .= "{{RFC list footer|" . $RFCcategory . "|hide_instructions={{{hide_instructions}}} }}";
 	
 	if (count($summary_added)>0) {
-		$summary .= "Added: ";
+		$summary .= "新增：";
 		foreach ($summary_added as $add) {
 			$summary .= "[[$add]] ";
 		}
 	}
 	
 	if (!empty($summary_removed)) {
-		$summary .= "Removed:";
+		$summary .= "移除：";
 		foreach ($summary_removed as $removed) {
 			$summary .= " [[$removed]]";
 		}
@@ -424,21 +424,21 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 	
 	if ($oldpage != $newpage) {
 		if (empty($summary)) {
-			$summary = 'Maintenance';
+			$summary = '维护';
 		}
-		echo "Editing: [[$RFCpage]]\n";
+		echo "编辑：[[$RFCpage]]\n";
 		$RFCpage->edit($newpage,trim($summary).'.');
 	}
 }
 $rfclisting .= "}}";
 
 // Update [[Wikipedia:Dashboard/Requests for comment]]
-echo "Editing [[Wikipedia:Dashboard/Requests for comment]]\n";
-$dashboard = $wiki->page("Wikipedia:Dashboard/Requests for comment");
-$dashboard->edit($rfclisting,"Updating RFC listings.");
+echo "编辑：[[Wikipedia:状态面板/请求评论]]\n";
+$dashboard = $wiki->page("Wikipedia:状态面板/请求评论");
+$dashboard->edit($rfclisting,"更新RFC列表");
 
 // Feedback request service
-$frs = $wiki->page('Wikipedia:Feedback request service');
+$frs = $wiki->page('Wikipedia:回饋請求服務');
 $frscontent = explode("\n",$frs->content());
 $section = null;
 $frs_users = array();
@@ -453,7 +453,7 @@ foreach ($frscontent as $line) {
 		$frs_users[$m[1]][$section] = $m[3];
 	}
 	
-	if (!empty($line) && strpos('<!-- END OF RFC SECTION. DO NOT REMOVE THIS COMMENT. -->',$line) !== false) {
+	if (!empty($line) && strpos('<!-- 請求評論章節結束，請勿移除此行。 -->',$line) !== false) {
 		break;
 	}
 }
