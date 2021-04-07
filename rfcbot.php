@@ -106,7 +106,7 @@ $toolserver_username = $toolserver_mycnf['user'];
 $toolserver_password = $toolserver_mycnf['password'];
 
 echo "Connecting to tools-db\n";
-$rfcdb = new mysqli('tools-db',$toolserver_username,$toolserver_password,'s51043__legobot');
+$rfcdb = new mysqli('tools-db',$toolserver_username,$toolserver_password,'s54699__legobot');
 if(mysqli_connect_errno()) {
 	echo "Connection Failed: " . mysqli_connect_errno();
 	die();
@@ -116,7 +116,7 @@ $replica_mycnf = parse_ini_file("/data/project/legobot/replica.my.cnf");
 $replica_username = $replica_mycnf['user'];
 $replica_password = $replica_mycnf['password'];
 
-$enwikidb = new mysqli('zhwiki.labsdb',$replica_username,$replica_password,'zhwiki_p');
+$zhwikidb = new mysqli('zhwiki.labsdb',$replica_username,$replica_password,'zhwiki_p');
 if(mysqli_connect_errno()) {
 	echo "Connection Failed: " . mysqli_connect_errno();
 	die();
@@ -462,7 +462,7 @@ foreach ($frs_users as $username => $extra) {
 	// Get their userid
 	$userid='';
 	$user_ec='';
-	$enSelect = $enwikidb->prepare("SELECT user_id,user_editcount FROM user WHERE user_name=?;");
+	$enSelect = $zhwikidb->prepare("SELECT user_id,user_editcount FROM user WHERE user_name=?;");
 	$enSelect->bind_param("s",$username);
 	$enSelect->execute();
 	$enSelect->bind_result($userid,$user_ec);
@@ -495,7 +495,7 @@ foreach ($frs_users as $username => $extra) {
 
 	// Are they currently blocked
 	$ipb_id='';
-	$isblocked = $enwikidb->prepare("SELECT ipb_id FROM ipblocks WHERE ipb_user = ?;");
+	$isblocked = $zhwikidb->prepare("SELECT ipb_id FROM ipblocks WHERE ipb_user = ?;");
 	$isblocked->bind_param("i",$userid);
 	$isblocked->execute();
 	$isblocked->bind_result($ipb_id);
@@ -508,7 +508,7 @@ foreach ($frs_users as $username => $extra) {
 		$thirtydays = time() - 2592000;
 		$timestamp = date('YmdHis',$thirtydays);
 		$editsIn30Days='';
-		$recentEdits = $enwikidb->prepare("SELECT count(rev_id) FROM revision_userindex WHERE rev_user=? AND rev_timestamp  > ?;");
+		$recentEdits = $zhwikidb->prepare("SELECT count(rev_id) FROM revision_userindex WHERE rev_user=? AND rev_timestamp  > ?;");
 		$recentEdits->bind_param("ii",$userid,$timestamp);
 		$recentEdits->execute();
 		$recentEdits->bind_result($editsIn30Days);
