@@ -156,7 +156,7 @@ foreach ($transclusions as $page) {
 		$newtag		= str_replace("|}}", "}}", $newtag);
 		$newtag		= str_replace("|art", "|media", $newtag);
 		$content	= str_replace($fix, $newtag, $content);
-		echo "编辑[[$page]]\n";
+		echo "Editing [[$page]]\n";
 		$page->edit($content,"修正RFC模板语法");
 	}
 	
@@ -169,7 +169,7 @@ foreach ($transclusions as $page) {
 			$rfcid = generateRfcId(); # a seven-character random string with capital letters and digits
 			$content = str_replace($match, "{{subst:DNAU|5|weeks}}\n" . $match . "|rfcid=" . $rfcid . "}}", $content);
 			$content = str_replace("}}|rfcid", "|rfcid", $content);
-			echo "编辑[[$page]]\n";
+			echo "Editing [[$page]]\n";
 			$page->edit($content,"新增RFC ID");
 			
 			$insertId = $rfcdb->prepare("INSERT INTO `rfc` (`rfc_id`, `rfc_page`, `rfc_contacted`) VALUES (?, ?, 0);");
@@ -237,7 +237,7 @@ foreach ($transclusions as $page) {
 			echo "RFC过期，去除标签。\n";
 			$content = preg_replace("/\{\{rfc(tag)?(?!\s+top)\s*(\|[a-z0-9\., ]*)*\s*\|rfcid=$rfcid\s*(\|[a-z0-9\., \|]*)*\s*\}\}(\n|\s)?/i", "", $content);
 			
-			echo "编辑[[$page]]\n";
+			echo "Editing [[$page]]\n";
 			$page->edit($content,"去除过期的请求评论模板");
 			
 			$all_expired[] = $rfcid;
@@ -426,14 +426,14 @@ foreach ($RFC_pagetitles as $RFCcategory => $RFCpage) {
 		if (empty($summary)) {
 			$summary = '维护';
 		}
-		echo "编辑：[[$RFCpage]]\n";
+		echo "Editing: [[$RFCpage]]\n";
 		$RFCpage->edit($newpage,trim($summary).'.');
 	}
 }
 $rfclisting .= "}}";
 
 // Update [[Wikipedia:Dashboard/Requests for comment]]
-echo "编辑：[[Wikipedia:状态面板/请求评论]]\n";
+echo "Editing [[Wikipedia:Dashboard/Requests for comment]]\n";
 $dashboard = $wiki->page("Wikipedia:状态面板/请求评论");
 $dashboard->edit($rfclisting,"更新RFC列表");
 
